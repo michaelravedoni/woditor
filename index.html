@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Template -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Web open document (WOD) Editor</title>
+  <meta name="description" content="description here">
+  <!-- <link rel="shortcut icon" href="favicon.png" type="image/png"> -->
+  <link rel="stylesheet" type="text/css" href="woditor.css" />
+  <script src="woditor.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/codemirror.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/codemirror.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/javascript/javascript.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.26.2/jsoneditor.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/5.26.2/jsoneditor.min.js"></script>
+
+</head>
+<body>
+
+  <div class="wod-editor">
+    <div id="woditor"></div>
+  </div>
+
+  <script>
+  var opts = {
+    file: 'web-document.html',
+    html: '',
+    htmlStr: '<h1>Titre</h1><span data-bind="name"></span>',
+    htmlShow: true,
+    cssShow: true,
+    jsShow: true,
+    stylesShow: true,
+    layout: 'half',
+    initialFull: 'editor',
+    style: 'tabs',
+    initialTab: 'html',
+    fullscreen: false,
+    topbar: true,
+    title: 'Woditor'
+  };
+  var woditor = new Woditor('woditor', opts);
+</script>
+</body>
+</html>

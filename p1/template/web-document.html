@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Template -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Web open document (WDS)</title>
+  <meta name="description" content="description here">
+  <!-- <link rel="shortcut icon" href="favicon.png" type="image/png"> -->
+  <!-- <link rel="stylesheet" href="//fonts.googleapis.com/css?family=font1|font2|etc" type="text/css"> -->
+
+  <!-- WOD -->
+  <style type="text/css" id="wod-styles-print">
+  :root {
+    --serif: 'spectral', serif;
+    --sans-serif: 'hk-grotesk', sans-serif;
+    --font-size: 13px;
+    --line-height: 15px;
+  }
+  @page {
+    size: A5 portrait;
+  }
+  </style>
+
+  <style type="text/css" id="wod-styles">
+  h1 {color:blue;}
+  </style>
+
+  <script type="application/ld+json" id="wod-data">
+  {
+    "@context": {
+      "schema": "http://schema.org/",
+      "name": "schema:Name",
+      "creator": "http://purl.org/dc/terms/creator",
+      "license": {
+        "@id": "http://purl.org/dc/terms/license",
+        "@type": "@id"
+      },
+      "description": "http://purl.org/dc/terms/description",
+      "created": "http://purl.org/dc/terms/created",
+      "@language": "en"
+    },
+    "@type": "schema:CreativeWork",
+    "name": "Unlimited Ball Bearings Corp.",
+    "url": "http://www.example.com",
+    "text": "Lorem ispum.",
+    "creator": "Creator name",
+    "objects": [
+      {
+        "name": "Nom de l'objet 1"
+      },
+      {
+        "name": "Nom de l'objet 2"
+      }
+    ]
+  }
+</script>
+
+<!-- WODitor -->
+<!-- <script src="template.js"></script> -->
+<script src="wod-pagedjs.js" type="text/javascript" id="wod-pagedjs"></script>
+<script src="transparency.min.js"></script>
+<!-- <script src="wod-template.js" type="text/javascript" id="wod-template" defer></script> -->
+<!-- <link rel="stylesheet" type="text/css" href="theme.css" id="wods-pagedjs-styles"> -->
+
+<style type="text/css" id="wod-pagedjs-styles">
+/* Variables for the interface */
+:root {
+  --wod-pjs-color-background: rgba(0, 0, 0, 0.2);
+  --wod-pjs-color-marginBox: transparent;
+  --wod-pjs-color-pageBox: transparent;
+  --wod-pjs-color-paper: white;
+}
+/* To define how the book look on the screen: */
+@media screen {
+  body {
+    background-color: var(--wod-pjs-color-background);
+  }
+  .pagedjs_pages {
+    display: flex;
+    width: calc(var(--wod-pjs-width) * 2);
+    flex: 0;
+    flex-wrap: wrap;
+    margin: 0 auto;
+  }
+  .pagedjs_page {
+    background-color: var(--wod-pjs-color-paper);
+    box-shadow: 0 0 0 2px var(--wod-pjs-color-pageBox);
+    margin: 0;
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin-top: 10mm;
+  }
+  .pagedjs_first_page {
+    margin-left: var(--wod-pjs-width);
+  }
+  /* show the margin-box */
+  .pagedjs_margin-content
+  {
+    box-shadow: 0 0 0 1px inset var(--wod-pjs-color-marginBox);
+  }
+  /* uncomment for recto/verso book.
+  --------------------------------------------------- */
+  .pagedjs_pages {
+    flex-direction: column;
+    width: 100%;
+  }
+  .pagedjs_first_page {
+    margin-left: 0;
+  }
+  .pagedjs_page {
+    margin: 0 auto;
+    margin-top: 10mm;
+  }
+}
+</style>
+<script>
+/* Get data from #wod-data */
+var d = document.querySelectorAll('#wpd-data')[0].innerHTML;
+/* check if d contains at least one character of non whitespace */
+if (/\S/.test(d)) {
+  var data = JSON.parse(d);
+  console.log(data);
+}
+
+/* Transparency */
+Transparency.render(document.getElementById('wod-template-container'), data);
+</script>
+<script type="application/ld+json" id="wod-data-model">
+{}
+</script>
+
+</head>
+<body id="wod-template-container">
+  <h1>Titre</h1>
+  <div>
+    <span data-bind="name"></span>
+    <div data-bind="objects">
+      <div data-bind="name"></div>
+    </div>
+  </div>
+
+</body>
+</html>

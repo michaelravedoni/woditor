@@ -7,7 +7,7 @@
 <!--general meta information-->
 <meta charset="utf-8">
 <meta name="author" content="Mark Hillard">
-<meta name="description" content="Editor is a responsive HTML/CSS/JS code editor that renders what you type in real-time.">
+<meta name="description" content="Editor is a responsive HTML/Styles/JS code editor that renders what you type in real-time.">
 <meta name="keywords" content="html, css, javascript, jquery, code, editor, real-time, responsive">
 
 <!--mobile specific meta information-->
@@ -54,6 +54,10 @@
 <script src="https://unpkg.com/htmlhint@0.10.1/lib/htmlhint.js"></script>
 <script src="https://unpkg.com/csslint@1.0.5/dist/csslint.js"></script>
 <script src="https://unpkg.com/jshint@2.9.6/dist/jshint.js"></script>
+
+<!--jsoneditor-->
+<script src="./vendor/jsoneditor/jsoneditor.min.js"></script>
+<link rel="stylesheet" href="./vendor/jsoneditor/jsoneditor.min.css">
 
 <!--codemirror main-->
 <script src="./codemirror/lib/codemirror.js"></script>
@@ -107,7 +111,7 @@
         <div class="code-swap">
             <span class="toggle-view">view <span class="fas fa-chevron-down"></span></span>
             <span class="code-swap-html active" href="#">HTML</span>
-            <span class="code-swap-css" href="#">CSS</span>
+            <span class="code-swap-css" href="#">Styles</span>
             <span class="code-swap-js" href="#">JS</span>
             <span class="code-swap-data" href="#">Data</span>
             <span class="toggle-preview" href="#">preview <span class="fas fa-eye"></span></span>
@@ -144,14 +148,15 @@
             <div class="code-pane-html">
                 <textarea id="htmlcode" name="htmlcode"></textarea>
             </div>
-            <div class="code-pane-css">
-                <textarea id="csscode" name="csscode"></textarea>
+            <div class="code-pane-styles">
+                <textarea id="stylescode" name="stylescode"></textarea>
             </div>
             <div class="code-pane-js">
                 <textarea id="jscode" name="jscode"></textarea>
             </div>
             <div class="code-pane-data">
-                <textarea id="datacode" name="datacode"></textarea>
+                <!--<textarea id="datacode" name="datacode"></textarea>-->
+                <div id="datacode" name="datacode" style="height: 100%;"></div>
             </div>
         </div>
         <div class="preview-pane">

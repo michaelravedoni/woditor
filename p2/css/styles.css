@@ -367,7 +367,7 @@ display:none;
     }
 }
 
-.toggle-lineWrapping.css,
+.toggle-lineWrapping.styles,
 .toggle-lineWrapping.js {
 position:absolute;
 visibility:hidden;

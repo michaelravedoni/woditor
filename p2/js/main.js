@@ -73,13 +73,33 @@ E(document).ready(function () {
         lint: true
     });
 
+    // paged code
+    var editorPaged = document.editor = CodeMirror.fromTextArea(pagedcode, {
+        mode: 'css',
+        profile: 'css',
+        keyMap: 'sublime',
+        lineNumbers: true,
+        lineWrapping: false,
+        theme: 'dracula',
+        tabSize: 4,
+        indentUnit: 4,
+        foldGutter: true,
+        gutters: ['CodeMirror-lint-markers', 'CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        scrollbarStyle: 'overlay',
+        styleActiveLine: true,
+        lint: false
+    });
+
     // js code
     var editorJS = document.editor = CodeMirror.fromTextArea(jscode, {
         mode: 'javascript',
         keyMap: 'sublime',
         lineNumbers: true,
-        lineWrapping: false,
+        lineWrapping: true,
         theme: 'dracula',
+        indentWithTabs: true,
         tabSize: 4,
         indentUnit: 4,
         foldGutter: true,
@@ -91,23 +111,7 @@ E(document).ready(function () {
         lint: true
     });
 
-    // js code
-    /*var editorData = document.editor = CodeMirror.fromTextArea(datacode, {
-        mode: 'json',
-        keyMap: 'sublime',
-        lineNumbers: true,
-        lineWrapping: false,
-        theme: 'dracula',
-        tabSize: 4,
-        indentUnit: 4,
-        foldGutter: true,
-        gutters: ['CodeMirror-lint-markers', 'CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        scrollbarStyle: 'overlay',
-        styleActiveLine: true,
-        lint: true
-    });*/
+    // data code
     var editorData = new JSONEditor(document.getElementById("datacode"),
     {
         modes: ['tree', 'view', 'form', 'code'],
@@ -133,9 +137,11 @@ E(document).ready(function () {
     <p>Fork me on <a href="https://github.com/michaelravedoni/woditor">GitHub</a></p>
 </main>`;
     var defaultStyles = '@import url(\"https://fonts.googleapis.com/styles?family=Droid+Sans:400,700\");\n\nhtml,body {\n    background-color: #282a36;\n    color: #fff;\n    font-family: \"Droid Sans\", sans-serif;\n    overflow: hidden;\n    text-align: center;\n}\n\nmain {\n    left: 50%;\n    position: absolute;\n    top: 50%;\n    transform: translate(-50%, -50%);\n}\n\nh1 {\n    font-size: 10rem;\n    font-weight: 400;\n    margin: 0;\n}\n\np {\n    font-size: 1rem;\n    letter-spacing: .03rem;\n    line-height: 1.45;\n    margin: 1rem 0;\n}\n\na {\n    color: #6d8a88;\n}\n\n@media only screen and (max-width: 600px) {\n    h1 {\n        font-size: 5rem;\n    }\n}';
+    var defaultPaged = ``;
     var defaultJS = `console.log('Hello Woditor');`;
     var defaultData = `{}`;
     var defaultFontSize = '100';
+    var defaultDocument = '';
     var defaultTemplate = '../template/default.html';
 
     // LOAD TEMPLATE
@@ -151,13 +157,14 @@ E(document).ready(function () {
     console.log(template);
 
     // load template
-    function loadTemplate(callback) {
+    function loadTemplate(template) {
         const req = new XMLHttpRequest();
-        let file = '../template/default.html';
+        let file = template;
         req.onload = function () {
             if (this.status === 200 || this.status == 0) {
-                let response = this.responseXML;
-                callback(response);
+                let response = this.responseXML.documentElement.outerHTML;
+                //callback(response);
+                localStorage.setItem('document', response);
             } else {
                 console.log(file, req);
             }
@@ -166,6 +173,7 @@ E(document).ready(function () {
         req.responseType = 'document';
         req.send();
     }
+    loadTemplate(template);
 
     // CODE LOADING
     // ------------------------------
@@ -195,8 +203,10 @@ E(document).ready(function () {
     }
     loadCode(template, editorHTML, 'body');
     loadCode(template, editorStyles, '#wpd-styles');
+    loadCode(template, editorPaged, '#wpd-styles-paged');
     loadCode(template, editorJS, '#wpd-js');
     loadCode(template, editorData, '#wpd-data');
+
 
     // load html
     function setHTML() {
@@ -207,6 +217,11 @@ E(document).ready(function () {
     // load styles
     function setStyles() {
         console.log('setStyles');
+    }
+
+    // load paged
+    function setPaged() {
+        console.log('setPaged');
     }
 
     // load js
@@ -232,6 +247,11 @@ E(document).ready(function () {
         localStorage.setItem('stylescode', defaultStyles);
     }
 
+    // set default paged value
+    if (localStorage.getItem('pagedcode') === null) {
+        localStorage.setItem('pagedcode', defaultPaged);
+    }
+
     // set default js value
     if (localStorage.getItem('jscode') === null) {
         localStorage.setItem('jscode', defaultJS);
@@ -247,9 +267,15 @@ E(document).ready(function () {
         localStorage.setItem('fontsize', defaultFontSize);
     }
 
+    // set default document value
+    if (localStorage.getItem('document') === null) {
+        localStorage.setItem('document', defaultDocument);
+    }
+
     // load code values
     editorHTML.setValue(localStorage.getItem('htmlcode'));
     editorStyles.setValue(localStorage.getItem('stylescode'));
+    editorPaged.setValue(localStorage.getItem('pagedcode'));
     editorJS.setValue(localStorage.getItem('jscode'));
     editorData.set(localStorage.getItem('datacode'));
 
@@ -262,6 +288,7 @@ E(document).ready(function () {
     // editor update (html)
     var delayHTML;
     editorHTML.on('change', function () {
+        setHTML();
         clearTimeout(delayHTML);
         delayHTML = window.setTimeout(render, 1000);
         localStorage.setItem('htmlcode', editorHTML.getValue());
@@ -274,9 +301,17 @@ E(document).ready(function () {
         render();
     });
 
+    // editor update (paged)
+    editorPaged.on('change', function () {
+        setPaged();
+        localStorage.setItem('pagedcode', editorPaged.getValue());
+        render();
+    });
+
     // editor update (js)
     var delayJS;
     editorJS.on('change', function () {
+        setJS();
         clearTimeout(delayJS);
         delayJS = window.setTimeout(render, 1000);
         localStorage.setItem('jscode', editorJS.getValue());
@@ -285,6 +320,7 @@ E(document).ready(function () {
     // editor update (data)
     var delayData;
     function editorDataUpdate() {
+        setData();
         clearTimeout(delayData);
         delayData = window.setTimeout(render, 1000);
         localStorage.setItem('datacode', editorData.get());
@@ -314,16 +350,8 @@ E(document).ready(function () {
         <!-- <link rel="stylesheet" href="//fonts.googleapis.com/styles?family=font1|font2|etc" type="text/styles"> -->
 
         <!-- WOD -->
-        <style type="text/styles" id="wpd-styles-print">
-        :root {
-            --serif: 'spectral', serif;
-            --sans-serif: 'hk-grotesk', sans-serif;
-            --font-size: 13px;
-            --line-height: 15px;
-        }
-        @page {
-            size: A5 portrait;
-        }
+        <style type="text/styles" id="wpd-styles-paged">
+        ${editorPaged.getValue()}
         </style>
 
         <style type="text/styles" id="wpd-styles">
@@ -406,6 +434,8 @@ E(document).ready(function () {
         iframeDocument.open();
         iframeDocument.write(source);
         iframeDocument.close();
+
+        localStorage.setItem('document', source);
     }
 
     // DEPENDENCY INJECTION
@@ -534,10 +564,12 @@ E(document).ready(function () {
     E('.code-swap span').not('.toggle-view').on('click', function () {
         var codeHTML = E('.code-pane-html'),
             codeStyles = E('.code-pane-styles'),
+            codePaged = E('.code-pane-paged'),
             codeJS = E('.code-pane-js'),
             codeData = E('.code-pane-data'),
             wrapHTML = E('.toggle-lineWrapping.html'),
             wrapStyles = E('.toggle-lineWrapping.styles'),
+            wrapPaged = E('.toggle-lineWrapping.paged'),
             wrapJS = E('.toggle-lineWrapping.js'),
             wrapData = E('.toggle-lineWrapping.data'),
             preview = E('.preview-pane');
@@ -549,6 +581,8 @@ E(document).ready(function () {
             swapOn(wrapHTML);
             swapOff(codeStyles);
             swapOff(wrapStyles);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
             swapOff(codeJS);
             swapOff(wrapJS);
             swapOff(codeData);
@@ -563,6 +597,24 @@ E(document).ready(function () {
             swapOn(wrapStyles);
             swapOff(codeHTML);
             swapOff(wrapHTML);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
+            swapOff(codeJS);
+            swapOff(wrapJS);
+            swapOff(codeData);
+            swapOff(wrapData);
+            if (E(window).width() <= 800) {
+                swapOff(preview);
+            } else {
+                swapOn(preview);
+            }
+        } else if (E(this).is(':contains("Paged")')) {
+            swapOn(codePaged);
+            swapOn(wrapPaged);
+            swapOff(codeHTML);
+            swapOff(wrapHTML);
+            swapOff(codeStyles);
+            swapOff(wrapStyles);
             swapOff(codeJS);
             swapOff(wrapJS);
             swapOff(codeData);
@@ -579,6 +631,8 @@ E(document).ready(function () {
             swapOff(wrapHTML);
             swapOff(codeStyles);
             swapOff(wrapStyles);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
             swapOff(codeData);
             swapOff(wrapData);
             if (E(window).width() <= 800) {
@@ -595,6 +649,8 @@ E(document).ready(function () {
             swapOff(wrapHTML);
             swapOff(codeStyles);
             swapOff(wrapStyles);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
             if (E(window).width() <= 800) {
                 swapOff(preview);
             } else {
@@ -606,6 +662,8 @@ E(document).ready(function () {
             swapOff(wrapHTML);
             swapOff(codeStyles);
             swapOff(wrapStyles);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
             swapOff(codeJS);
             swapOff(wrapJS);
             swapOff(codeData);
@@ -732,6 +790,7 @@ E(document).ready(function () {
     E('.reset-editor').on('click', function () {
         editorHTML.setValue(defaultHTML);
         editorStyles.setValue(defaultStyles);
+        editorPaged.setValue(defaultPaged);
         editorJS.setValue(defaultJS);
         editorData.set(defaultData);
     });
@@ -745,6 +804,7 @@ E(document).ready(function () {
     E('.clear-editor').on('click', function () {
         editorHTML.setValue('');
         editorStyles.setValue('');
+        editorPaged.setValue('');
         editorJS.setValue('');
         editorData.set('');
     });
@@ -754,6 +814,7 @@ E(document).ready(function () {
         setHTML();
         setJS();
         setStyles();
+        setPaged();
         setData();
 
         if (E(window).width() <= 800) {
@@ -763,112 +824,12 @@ E(document).ready(function () {
 
     // save as html file
     E('.save').on('click', function () {
-        var text = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-        <!-- Template -->
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>Web paged document (WPD)</title>
-        <meta name="description" content="description here">
-        <!-- <link rel="shortcut icon" href="favicon.png" type="image/png"> -->
-        <!-- <link rel="stylesheet" href="//fonts.googleapis.com/styles?family=font1|font2|etc" type="text/styles"> -->
-
-        <!-- WOD -->
-        <style type="text/styles" id="wpd-styles-print">
-        :root {
-            --serif: 'spectral', serif;
-            --sans-serif: 'hk-grotesk', sans-serif;
-            --font-size: 13px;
-            --line-height: 15px;
-        }
-        @page {
-            size: A5 portrait;
-        }
-        </style>
-
-        <style type="text/styles" id="wpd-styles">
-        ${editorStyles.getValue()}
-        </style>
-
-        <script type="application/ld+json" id="wpd-data">
-        ${editorData.get()}
-        </script>
-
-        <script defer="defer" async id="wpd-js">${editorJS.getValue()}</script>
-
-        <!-- Woditor -->
-        <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js" type="text/javascript" id="woditor-pagedjs"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/transparency/0.9.9/transparency.min.js"></script>
-        <!-- <script src="woditor-template.json" type="text/javascript" id="woditor-template" defer></script> -->
-
-        <style type="text/styles" id="wpd-pagedjs-styles">
-        /* Variables for the interface */
-        :root {
-            --wpd-pjs-color-background: rgba(0, 0, 0, 0.2);
-            --wpd-pjs-color-marginBox: transparent;
-            --wpd-pjs-color-pageBox: transparent;
-            --wpd-pjs-color-paper: white;
-        }
-        /* To define how the book look on the screen: */
-        @media screen {
-            body {
-                background-color: var(--wpd-pjs-color-background);
-            }
-            .pagedjs_pages {
-                display: flex;
-                width: calc(var(--wpd-pjs-width) * 2);
-                flex: 0;
-                flex-wrap: wrap;
-                margin: 0 auto;
-            }
-            .pagedjs_page {
-                background-color: var(--wpd-pjs-color-paper);
-                box-shadow: 0 0 0 2px var(--wpd-pjs-color-pageBox);
-                margin: 0;
-                flex-shrink: 0;
-                flex-grow: 0;
-                margin-top: 10mm;
-            }
-            .pagedjs_first_page {
-                margin-left: var(--wpd-pjs-width);
-            }
-            /* show the margin-box */
-            .pagedjs_margin-content
-            {
-                box-shadow: 0 0 0 1px inset var(--wpd-pjs-color-marginBox);
-            }
-            /* uncomment for recto/verso book.
-            --------------------------------------------------- */
-            .pagedjs_pages {
-                flex-direction: column;
-                width: 100%;
-            }
-            .pagedjs_first_page {
-                margin-left: 0;
-            }
-            .pagedjs_page {
-                margin: 0 auto;
-                margin-top: 10mm;
-            }
-        }
-        </style>
-        <script type="application/ld+json" id="woditor-data-model">
-        {}
-        </script>
-
-        </head>
-        <body id="woditor-transparency-container">
-        ${editorHTML.getValue()}
-        </body>
-        </html>`,
+        var text = localStorage.getItem('document'),
             blob = new Blob([text], {
                 type: 'text/html; charset=utf-8'
             });
 
-        saveAs(blob, 'editor.html');
+        saveAs(blob, 'woditor.html');
     });
 
 

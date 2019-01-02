@@ -38,22 +38,22 @@
 <link rel="stylesheet" href="./css/jquery-ui.structure.min.css">
 
 <!--codemirror styles-->
-<link rel="stylesheet" href="./codemirror/lib/codemirror.css">
-<link rel="stylesheet" href="./codemirror/addon/fold/foldgutter.css">
-<link rel="stylesheet" href="./codemirror/addon/scroll/simplescrollbars.css">
-<link rel="stylesheet" href="./codemirror/addon/lint/lint.css">
-<link rel="stylesheet" href="./codemirror/theme/dracula.css">
+<link rel="stylesheet" href="./vendor/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="./vendor/codemirror/addon/fold/foldgutter.css">
+<link rel="stylesheet" href="./vendor/codemirror/addon/scroll/simplescrollbars.css">
+<link rel="stylesheet" href="./vendor/codemirror/addon/lint/lint.css">
+<link rel="stylesheet" href="./vendor/codemirror/theme/dracula.css">
 
 <!--requried styles-->
 <link rel="stylesheet" href="./css/styles.css">
 
 <!--html5 shiv-->
-<!--[if lt IE 9]><script src="./js/html5shiv-printshiv.min.js"></script><![endif]-->
+<!--[if lt IE 9]><script src="./vendor/html5shiv-printshiv.min.js"></script><![endif]-->
 
 <!--required scripts-->
-<script src="./js/prefixfree.min.js"></script>
-<script src="./js/jquery.min.js"></script>
-<script src="./js/jquery-ui.min.js"></script>
+<script src="./vendor/prefixfree.min.js"></script>
+<script src="./vendor/jquery.min.js"></script>
+<script src="./vendor/jquery-ui.min.js"></script>
 <script src="https://unpkg.com/htmlhint@0.10.1/lib/htmlhint.js"></script>
 <script src="https://unpkg.com/csslint@1.0.5/dist/csslint.js"></script>
 <script src="https://unpkg.com/jshint@2.9.6/dist/jshint.js"></script>
@@ -63,41 +63,46 @@
 <link rel="stylesheet" href="./vendor/jsoneditor/jsoneditor.min.css">
 
 <!--codemirror main-->
-<script src="./codemirror/lib/codemirror.js"></script>
+<script src="./vendor/codemirror/lib/codemirror.js"></script>
 
 <!--codemirror modes-->
-<script src="./codemirror/mode/xml/xml.js"></script>
-<script src="./codemirror/mode/css/css.js"></script>
-<script src="./codemirror/mode/javascript/javascript.js"></script>
+<script src="./vendor/codemirror/mode/xml/xml.js"></script>
+<script src="./vendor/codemirror/mode/css/css.js"></script>
+<script src="./vendor/codemirror/mode/javascript/javascript.js"></script>
 
 <!--codemirror addons-->
-<script src="./codemirror/addon/fold/xml-fold.js"></script>
-<script src="./codemirror/addon/fold/foldcode.js"></script>
-<script src="./codemirror/addon/fold/foldgutter.js"></script>
-<script src="./codemirror/addon/fold/brace-fold.js"></script>
-<script src="./codemirror/addon/edit/matchtags.js"></script>
-<script src="./codemirror/addon/edit/matchbrackets.js"></script>
-<script src="./codemirror/addon/edit/closetag.js"></script>
-<script src="./codemirror/addon/edit/closebrackets.js"></script>
-<script src="./codemirror/addon/scroll/simplescrollbars.js"></script>
-<script src="./codemirror/addon/selection/active-line.js"></script>
-<script src="./codemirror/addon/lint/lint.js"></script>
-<script src="./codemirror/addon/lint/html-lint.js"></script>
-<script src="./codemirror/addon/lint/css-lint.js"></script>
-<script src="./codemirror/addon/lint/javascript-lint.js"></script>
+<script src="./vendor/codemirror/addon/fold/xml-fold.js"></script>
+<script src="./vendor/codemirror/addon/fold/foldcode.js"></script>
+<script src="./vendor/codemirror/addon/fold/foldgutter.js"></script>
+<script src="./vendor/codemirror/addon/fold/brace-fold.js"></script>
+<script src="./vendor/codemirror/addon/edit/matchtags.js"></script>
+<script src="./vendor/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="./vendor/codemirror/addon/edit/closetag.js"></script>
+<script src="./vendor/codemirror/addon/edit/closebrackets.js"></script>
+<script src="./vendor/codemirror/addon/scroll/simplescrollbars.js"></script>
+<script src="./vendor/codemirror/addon/selection/active-line.js"></script>
+<script src="./vendor/codemirror/addon/lint/lint.js"></script>
+<script src="./vendor/codemirror/addon/lint/html-lint.js"></script>
+<script src="./vendor/codemirror/addon/lint/css-lint.js"></script>
+<script src="./vendor/codemirror/addon/lint/javascript-lint.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.8.10-beta1/beautify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.8.10-beta1/beautify-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.8.10-beta1/beautify-html.min.js"></script>
+<script src='http://lovasoa.github.io/tidy-html5/tidy.js'></script>
 
 <!--codemirror keymap-->
-<script src="./codemirror/keymap/sublime.js"></script>
+<script src="./vendor/codemirror/keymap/sublime.js"></script>
 
 <!--twitter typeahead-->
-<script src="./js/typeahead.bundle.min.js"></script>
+<script src="./vendor/typeahead.bundle.min.js"></script>
 
 <!--emmet-->
-<script async src="./js/emmet.min.js"></script>
+<script async src="./vendor/emmet.min.js"></script>
 
 <!--file saver-->
-<script defer src="./js/Blob.min.js"></script>
-<script defer src="./js/FileSaver.min.js"></script>
+<script defer src="./vendor/Blob.min.js"></script>
+<script defer src="./vendor/FileSaver.min.js"></script>
 
 <!--font awesome-->
 <script defer src="https://use.fontawesome.com/releases/v5.5.0/js/solid.js" integrity="sha384-Xgf/DMe1667bioB9X1UM5QX+EG6FolMT4K7G+6rqNZBSONbmPh/qZ62nBPfTx+xG" crossorigin="anonymous"></script>
@@ -113,11 +118,13 @@
         </div>
         <div class="code-swap">
             <span class="toggle-view">view <span class="fas fa-chevron-down"></span></span>
-            <span class="code-swap-html active" href="#">HTML</span>
+            <span class="code-swap-content active" href="#">Content</span>
+            <span class="code-swap-html" href="#">HTML</span>
             <span class="code-swap-css" href="#">Styles</span>
             <span class="code-swap-paged" href="#">Paged</span>
             <span class="code-swap-js" href="#">JS</span>
             <span class="code-swap-data" href="#">Data</span>
+            <span class="code-swap-config active" href="#">Config</span>
             <span class="toggle-preview" href="#">preview <span class="fas fa-eye"></span></span>
         </div>
         <div class="font-size">
@@ -129,10 +136,10 @@
         </div>
         <div class="code-tools">
             <span class="toggle-tools">tools <span class="fas fa-chevron-down"></span></span>
-            <span class="toggle-lineWrapping html">wrap <span class="fas fa-toggle-off"></span></span>
+            <!--<span class="toggle-lineWrapping html">wrap <span class="fas fa-toggle-off"></span></span>
             <span class="toggle-lineWrapping css">wrap <span class="fas fa-toggle-off"></span></span>
             <span class="toggle-lineWrapping js">wrap <span class="fas fa-toggle-off"></span></span>
-            <span class="toggle-lineWrapping data">wrap <span class="fas fa-toggle-off"></span></span>
+            <span class="toggle-lineWrapping data">wrap <span class="fas fa-toggle-off"></span></span>-->
             <span class="toggle-emmet">emmet <span class="fas fa-toggle-off"></span></span>
             <span class="reset-editor">reset <span class="fas fa-undo"></span></span>
             <span class="refresh-editor">refresh <span class="fas fa-sync"></span></span>
@@ -143,12 +150,18 @@
         <div class="template-search">
             <input id="template-input" class="template-search-input" type="text" placeholder="template path...">
         </div>
+        <div class="file-search">
+            <input id="file-input" class="file-search-input" type="text" placeholder="file path...">
+        </div>
         <div class="cdnjs-search">
             <input class="cdnjs" type="text" placeholder="cdnjs...">
         </div>
     </section>
     <section id="editor">
         <div class="code-pane">
+            <div class="code-pane-content">
+                <div id="contentcode" name="contentcode" style="height: 100%;"></div>
+            </div>
             <div class="code-pane-html">
                 <textarea id="htmlcode" name="htmlcode"></textarea>
             </div>
@@ -165,9 +178,12 @@
                 <!--<textarea id="datacode" name="datacode"></textarea>-->
                 <div id="datacode" name="datacode" style="height: 100%;"></div>
             </div>
+            <div class="code-pane-config">
+                <div id="configcode" name="configcode" style="height: 100%;"></div>
+            </div>
         </div>
         <div class="preview-pane">
-            <iframe id="preview" name="preview" src="../template/default.html" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts" allowfullscreen="true" allowtransparency="true" allowpaymentrequest="true"></iframe>
+            <iframe id="preview" name="preview" src="./template/default.html" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts" allowfullscreen="true" allowtransparency="true" allowpaymentrequest="true"></iframe>
             <span class="preview-width"></span>
         </div>
     </section>

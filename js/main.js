@@ -23,7 +23,6 @@
 // ------------------------------
 */
 
-
 // make jQuery play nice
 var E = $.noConflict(true);
 
@@ -31,13 +30,24 @@ E(document).ready(function () {
 
     // INITIALIZE CODEMIRROR
     // ------------------------------
+    // content code
+    var editorContent = new JSONEditor(document.getElementById("contentcode"),
+    {
+        modes: ['tree', 'view', 'form', 'code'],
+        onChange: function () {
+            console.log('change');
+            editorContentUpdate();
+        },
+    });
+
     // html code
     var editorHTML = document.editor = CodeMirror.fromTextArea(htmlcode, {
         mode: 'text/html',
         profile: 'html',
+        beautify: true,
         keyMap: 'sublime',
         lineNumbers: true,
-        lineWrapping: false,
+        lineWrapping: true,
         theme: 'dracula',
         tabSize: 4,
         indentUnit: 4,
@@ -58,9 +68,10 @@ E(document).ready(function () {
     var editorStyles = document.editor = CodeMirror.fromTextArea(stylescode, {
         mode: 'css',
         profile: 'css',
+        beautify: true,
         keyMap: 'sublime',
         lineNumbers: true,
-        lineWrapping: false,
+        lineWrapping: true,
         theme: 'dracula',
         tabSize: 4,
         indentUnit: 4,
@@ -77,9 +88,10 @@ E(document).ready(function () {
     var editorPaged = document.editor = CodeMirror.fromTextArea(pagedcode, {
         mode: 'css',
         profile: 'css',
+        beautify: true,
         keyMap: 'sublime',
         lineNumbers: true,
-        lineWrapping: false,
+        lineWrapping: true,
         theme: 'dracula',
         tabSize: 4,
         indentUnit: 4,
@@ -121,6 +133,16 @@ E(document).ready(function () {
         },
     });
 
+    // config code
+    var editorConfig = new JSONEditor(document.getElementById("configcode"),
+    {
+        modes: ['tree', 'view', 'form', 'code'],
+        onChange: function () {
+            console.log('change');
+            editorConfigUpdate();
+        },
+    });
+
     // font size
     var fontSize = E('.font-size input');
     function updateFontSize(editor, size) {
@@ -130,23 +152,21 @@ E(document).ready(function () {
 
     // DEFAULTS
     // ------------------------------
+    var defaultContent = ``;
     var defaultHTML =
-    `<main>
-    <h1>Woditor</h1>
-    <p>Real-time, responsive paged web document editor</p>
-    <p>Fork me on <a href="https://github.com/michaelravedoni/woditor">GitHub</a></p>
-</main>`;
-    var defaultStyles = '@import url(\"https://fonts.googleapis.com/styles?family=Droid+Sans:400,700\");\n\nhtml,body {\n    background-color: #282a36;\n    color: #fff;\n    font-family: \"Droid Sans\", sans-serif;\n    overflow: hidden;\n    text-align: center;\n}\n\nmain {\n    left: 50%;\n    position: absolute;\n    top: 50%;\n    transform: translate(-50%, -50%);\n}\n\nh1 {\n    font-size: 10rem;\n    font-weight: 400;\n    margin: 0;\n}\n\np {\n    font-size: 1rem;\n    letter-spacing: .03rem;\n    line-height: 1.45;\n    margin: 1rem 0;\n}\n\na {\n    color: #6d8a88;\n}\n\n@media only screen and (max-width: 600px) {\n    h1 {\n        font-size: 5rem;\n    }\n}';
+    `<h1>Woditor</h1>\n<p>Real-time, responsive paged web document editor. Fork me on <a href="https://github.com/michaelravedoni/woditor">GitHub</a></p>`;
+    var defaultStyles = ``;
     var defaultPaged = ``;
     var defaultJS = `console.log('Hello Woditor');`;
     var defaultData = `{}`;
+    var defaultConfig = `{}`;
     var defaultFontSize = '100';
-    var defaultDocument = '';
-    var defaultTemplate = '../template/default.html';
+    var defaultPreview = '';
+    var defaultFile = './template/default.html';
+    var defaultTemplate = './template/default.json';
 
     // LOAD TEMPLATE
     // ------------------------------
-    // Template document is displayed from iframe src element
     // get template
     var templateInput = document.querySelector('#template-input');
     if (templateInput.value) {
@@ -157,86 +177,126 @@ E(document).ready(function () {
     console.log(template);
 
     // load template
-    function loadTemplate(template) {
+    function loadTemplate(f) {
         const req = new XMLHttpRequest();
-        let file = template;
+        req.onload = function () {
+            if (req.status === 200 || req.status == 0) {
+                let response = req.responseText;
+                let responseJSON = JSON.parse(req.responseText);
+                localStorage.setItem('template', response);
+            } else {
+                console.log(f, req);
+            }
+        }
+        req.open('GET', f, true);
+        req.responseType = 'text';
+        req.send();
+    }
+    loadTemplate(template);
+
+    // LOAD File
+    // ------------------------------
+
+    // get file
+    var fileInput = document.querySelector('#file-input');
+    fileInput.addEventListener('change', getFile());
+    function getFile() {
+        if (fileInput.value) {
+            var file = fileInput.value;
+        } else {
+            var file = defaultFile;
+        }
+        console.log(file);
+        loadFile(file);
+    }
+
+    // load file
+    function loadFile(file) {
+        const req = new XMLHttpRequest();
+        let f = file;
         req.onload = function () {
             if (this.status === 200 || this.status == 0) {
                 let response = this.responseXML.documentElement.outerHTML;
-                //callback(response);
-                localStorage.setItem('document', response);
+
+                localStorage.setItem('file', response);
+                loadCode(localStorage.getItem('file'), editorContent, '#wpd-data');
+                loadCode(localStorage.getItem('file'), editorHTML, 'body');
+                loadCode(localStorage.getItem('file'), editorStyles, '#wpd-styles');
+                loadCode(localStorage.getItem('file'), editorPaged, '#wpd-styles-paged');
+                loadCode(localStorage.getItem('file'), editorJS, '#wpd-js');
+                loadCode(localStorage.getItem('file'), editorData, '#wpd-data');
+                loadCode(localStorage.getItem('file'), editorConfig, '#wpd-data');
             } else {
-                console.log(file, req);
+                console.log(f, req);
             }
         }
         req.open('GET', file, true);
         req.responseType = 'document';
         req.send();
     }
-    loadTemplate(template);
 
     // CODE LOADING
     // ------------------------------
     // load code
     function loadCode(file, ed, selector) {
         let _this = this;
-        var xhr = new window.XMLHttpRequest();
-        xhr.open('GET', file, true);
-        xhr.responseType = 'document';
-        xhr.onload = function () {
-            if (xhr.status === 200 || xhr.status == 0) {
-                let response = xhr.responseXML;
-                let responseCode = response.querySelector(selector).innerHTML;
-                if (ed == editorData) {
-                    ed.set(JSON.parse(responseCode));
-                } else {
-                    ed.setValue(responseCode);
-                }
+        var parser = new DOMParser();
+        var html = parser.parseFromString(file, 'text/html');
+        if (html.querySelector(selector).innerHTML) {
+            let code = html.querySelector(selector).innerHTML;
+            if (ed == editorContent || ed == editorData || ed == editorConfig) {
+                ed.set(JSON.parse(code));
             } else {
-                console.log(file, xhr);
+                ed.setValue(code);
             }
-        };
-        xhr.onerror = function (err) {
-            console.log(err);
-        };
-        xhr.send();
+        }
+        else {
+            console.log('Error: loadCode fail');
+        }
     }
-    loadCode(template, editorHTML, 'body');
-    loadCode(template, editorStyles, '#wpd-styles');
-    loadCode(template, editorPaged, '#wpd-styles-paged');
-    loadCode(template, editorJS, '#wpd-js');
-    loadCode(template, editorData, '#wpd-data');
 
+    // set content
+    function setContent() {
+        console.log('setContent');
+    }
 
-    // load html
+    // set html
     function setHTML() {
         console.log('setHTML');
-        let html = editorHTML.getValue();
     }
 
-    // load styles
+    // set styles
     function setStyles() {
         console.log('setStyles');
     }
 
-    // load paged
+    // set paged
     function setPaged() {
         console.log('setPaged');
     }
 
-    // load js
+    // set js
     function setJS() {
         console.log('setJS');
     }
 
-    // load data
+    // set data
     function setData() {
         console.log('setData');
+    }
+
+    // set config
+    function setConfig() {
+        console.log('setConfig');
     }
 
 
     // LOCAL STORAGE
     // ------------------------------
+    // set default content value
+    if (localStorage.getItem('contentcode') === null) {
+        localStorage.setItem('contentcode', defaultContent);
+    }
     // set default html value
     if (localStorage.getItem('htmlcode') === null) {
         localStorage.setItem('htmlcode', defaultHTML);
@@ -262,22 +322,29 @@ E(document).ready(function () {
         localStorage.setItem('datacode', defaultData);
     }
 
+    // set default config value
+    if (localStorage.getItem('configcode') === null) {
+        localStorage.setItem('configcode', defaultConfig);
+    }
+
     // set default font size
     if (localStorage.getItem('fontsize') === null) {
         localStorage.setItem('fontsize', defaultFontSize);
     }
 
-    // set default document value
-    if (localStorage.getItem('document') === null) {
-        localStorage.setItem('document', defaultDocument);
+    // set default preview value
+    if (localStorage.getItem('preview') === null) {
+        localStorage.setItem('preview', defaultPreview);
     }
 
     // load code values
+    editorContent.set(localStorage.getItem('contentcode'));
     editorHTML.setValue(localStorage.getItem('htmlcode'));
     editorStyles.setValue(localStorage.getItem('stylescode'));
     editorPaged.setValue(localStorage.getItem('pagedcode'));
     editorJS.setValue(localStorage.getItem('jscode'));
     editorData.set(localStorage.getItem('datacode'));
+    editorConfig.set(localStorage.getItem('configcode'));
 
     // load font size
     fontSize.val(localStorage.getItem('fontsize'));
@@ -285,13 +352,22 @@ E(document).ready(function () {
 
     // EDITOR UPDATES
     // ------------------------------
+    // editor update (content)
+    var delayContent;
+    function editorContentUpdate() {
+        setContent();
+        clearTimeout(delayContent);
+        delayContent = window.setTimeout(render, 1000);
+        localStorage.setItem('contentcode', editorContent.get());
+    }
     // editor update (html)
     var delayHTML;
     editorHTML.on('change', function () {
         setHTML();
+        let htmlCode = editorHTML.getValue();
         clearTimeout(delayHTML);
         delayHTML = window.setTimeout(render, 1000);
-        localStorage.setItem('htmlcode', editorHTML.getValue());
+        localStorage.setItem('htmlcode', htmlCode);
     });
 
     // editor update (styles)
@@ -326,6 +402,15 @@ E(document).ready(function () {
         localStorage.setItem('datacode', editorData.get());
     }
 
+    // editor update (config)
+    var delayConfig;
+    function editorConfigUpdate() {
+        setConfig();
+        clearTimeout(delayConfig);
+        delayConfig = window.setTimeout(render, 1000);
+        localStorage.setItem('condigcode', editorConfig.get());
+    }
+
     // run font size update
     updateFontSize(editorHTML, fontSize.val());
     updateFontSize(editorStyles, fontSize.val());
@@ -351,18 +436,18 @@ E(document).ready(function () {
 
         <!-- WOD -->
         <style type="text/styles" id="wpd-styles-paged">
-        ${editorPaged.getValue()}
+        ${localStorage.getItem('pagedcode')}
         </style>
 
         <style type="text/styles" id="wpd-styles">
-        ${editorStyles.getValue()}
+        ${localStorage.getItem('stylescode')}
         </style>
 
         <script type="application/ld+json" id="wpd-data">
         ${JSON.stringify(editorData.get())}
         </script>
 
-        <script defer="defer" async id="wpd-js">${editorJS.getValue()}</script>
+        <script defer="defer" async id="wpd-js">${localStorage.getItem('jscode')}</script>
 
         <!-- Woditor -->
         <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js" type="text/javascript" id="woditor-pagedjs"></script>
@@ -426,7 +511,7 @@ E(document).ready(function () {
 
         </head>
         <body id="woditor-transparency-container">
-        ${editorHTML.getValue()}
+        ${localStorage.getItem('htmlcode')}
         </body>
         </html>`;
         var iframeDocument = document.querySelector('#preview').contentDocument;
@@ -435,7 +520,7 @@ E(document).ready(function () {
         iframeDocument.write(source);
         iframeDocument.close();
 
-        localStorage.setItem('document', source);
+        localStorage.setItem('preview', source);
     }
 
     // DEPENDENCY INJECTION
@@ -562,23 +647,29 @@ E(document).ready(function () {
     }
 
     E('.code-swap span').not('.toggle-view').on('click', function () {
-        var codeHTML = E('.code-pane-html'),
+        var codeContent = E('.code-pane-content'),
+            codeHTML = E('.code-pane-html'),
             codeStyles = E('.code-pane-styles'),
             codePaged = E('.code-pane-paged'),
             codeJS = E('.code-pane-js'),
             codeData = E('.code-pane-data'),
+            codeConfig = E('.code-pane-config'),
+            wrapContent = E('.toggle-lineWrapping.content'),
             wrapHTML = E('.toggle-lineWrapping.html'),
             wrapStyles = E('.toggle-lineWrapping.styles'),
             wrapPaged = E('.toggle-lineWrapping.paged'),
             wrapJS = E('.toggle-lineWrapping.js'),
             wrapData = E('.toggle-lineWrapping.data'),
+            wrapConfig = E('.toggle-lineWrapping.config'),
             preview = E('.preview-pane');
 
         E(this).addClass('active').siblings().removeClass('active');
 
-        if (E(this).is(':contains("HTML")')) {
-            swapOn(codeHTML);
-            swapOn(wrapHTML);
+        if (E(this).is(':contains("Content")')) {
+            swapOn(codeContent);
+            swapOn(wrapContent);
+            swapOff(codeHTML);
+            swapOff(wrapHTML);
             swapOff(codeStyles);
             swapOff(wrapStyles);
             swapOff(codePaged);
@@ -587,6 +678,28 @@ E(document).ready(function () {
             swapOff(wrapJS);
             swapOff(codeData);
             swapOff(wrapData);
+            swapOff(codeConfig);
+            swapOff(wrapConfig);
+            if (E(window).width() <= 800) {
+                swapOff(preview);
+            } else {
+                swapOn(preview);
+            }
+        } else if (E(this).is(':contains("HTML")')) {
+            swapOn(codeHTML);
+            swapOn(wrapHTML);
+            swapOff(codeContent);
+            swapOff(wrapContent);
+            swapOff(codeStyles);
+            swapOff(wrapStyles);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
+            swapOff(codeJS);
+            swapOff(wrapJS);
+            swapOff(codeData);
+            swapOff(wrapData);
+            swapOff(codeConfig);
+            swapOff(wrapConfig);
             if (E(window).width() <= 800) {
                 swapOff(preview);
             } else {
@@ -595,6 +708,8 @@ E(document).ready(function () {
         } else if (E(this).is(':contains("Styles")')) {
             swapOn(codeStyles);
             swapOn(wrapStyles);
+            swapOff(codeContent);
+            swapOff(wrapContent);
             swapOff(codeHTML);
             swapOff(wrapHTML);
             swapOff(codePaged);
@@ -603,6 +718,8 @@ E(document).ready(function () {
             swapOff(wrapJS);
             swapOff(codeData);
             swapOff(wrapData);
+            swapOff(codeConfig);
+            swapOff(wrapConfig);
             if (E(window).width() <= 800) {
                 swapOff(preview);
             } else {
@@ -611,6 +728,8 @@ E(document).ready(function () {
         } else if (E(this).is(':contains("Paged")')) {
             swapOn(codePaged);
             swapOn(wrapPaged);
+            swapOff(codeContent);
+            swapOff(wrapContent);
             swapOff(codeHTML);
             swapOff(wrapHTML);
             swapOff(codeStyles);
@@ -619,6 +738,8 @@ E(document).ready(function () {
             swapOff(wrapJS);
             swapOff(codeData);
             swapOff(wrapData);
+            swapOff(codeConfig);
+            swapOff(wrapConfig);
             if (E(window).width() <= 800) {
                 swapOff(preview);
             } else {
@@ -627,6 +748,8 @@ E(document).ready(function () {
         } else if (E(this).is(':contains("JS")')) {
             swapOn(codeJS);
             swapOn(wrapJS);
+            swapOff(codeContent);
+            swapOff(wrapContent);
             swapOff(codeHTML);
             swapOff(wrapHTML);
             swapOff(codeStyles);
@@ -635,6 +758,8 @@ E(document).ready(function () {
             swapOff(wrapPaged);
             swapOff(codeData);
             swapOff(wrapData);
+            swapOff(codeConfig);
+            swapOff(wrapConfig);
             if (E(window).width() <= 800) {
                 swapOff(preview);
             } else {
@@ -643,14 +768,38 @@ E(document).ready(function () {
         } else if (E(this).is(':contains("Data")')) {
             swapOn(codeData);
             swapOn(wrapData);
-            swapOff(codeJS);
-            swapOff(wrapJS);
+            swapOff(codeContent);
+            swapOff(wrapContent);
             swapOff(codeHTML);
             swapOff(wrapHTML);
             swapOff(codeStyles);
             swapOff(wrapStyles);
+            swapOff(codeJS);
+            swapOff(wrapJS);
             swapOff(codePaged);
             swapOff(wrapPaged);
+            swapOff(codeConfig);
+            swapOff(wrapConfig);
+            if (E(window).width() <= 800) {
+                swapOff(preview);
+            } else {
+                swapOn(preview);
+            }
+        } else if (E(this).is(':contains("Config")')) {
+            swapOn(codeConfig);
+            swapOn(wrapConfig);
+            swapOff(codeContent);
+            swapOff(wrapContent);
+            swapOff(codeHTML);
+            swapOff(wrapHTML);
+            swapOff(codeStyles);
+            swapOff(wrapStyles);
+            swapOff(codeJS);
+            swapOff(wrapJS);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
+            swapOff(codeData);
+            swapOff(wrapData);
             if (E(window).width() <= 800) {
                 swapOff(preview);
             } else {
@@ -658,16 +807,20 @@ E(document).ready(function () {
             }
         } else if (E(this).is(':contains("preview")')) {
             swapOn(preview);
+            swapOff(codeContent);
+            swapOff(wrapContent);
             swapOff(codeHTML);
             swapOff(wrapHTML);
             swapOff(codeStyles);
             swapOff(wrapStyles);
-            swapOff(codePaged);
-            swapOff(wrapPaged);
             swapOff(codeJS);
             swapOff(wrapJS);
+            swapOff(codePaged);
+            swapOff(wrapPaged);
             swapOff(codeData);
             swapOff(wrapData);
+            swapOff(codeConfig);
+            swapOff(wrapConfig);
         }
     });
 
@@ -824,7 +977,7 @@ E(document).ready(function () {
 
     // save as html file
     E('.save').on('click', function () {
-        var text = localStorage.getItem('document'),
+        var text = localStorage.getItem('preview'),
             blob = new Blob([text], {
                 type: 'text/html; charset=utf-8'
             });

@@ -13,7 +13,7 @@
   <h3>
     <a href="https://github.com/michaelravedoni/woditor#documentation">Documentation</a>
     <span> | </span>
-    <a href="https://ravedoni.com/test/woditor/p2/">Demo</a>
+    <a href="https://michaelravedoni.github.io/woditor/">Demo</a>
     <span> | </span>
     <a href="#contributing">
       Contributing
@@ -48,7 +48,7 @@
 Imagine no longer needing Microsoft Word to create documents! Imagine that you can create documents only with W3C standards (HTML/CSS/JS/JSON+LD). Imagine that you can export and print them easily!
 That' s what this editor wants to do. Thanks to [Paged.js ](https://gitlab.pagedmedia.org/tools/pagedjs)and modern web browsers, this is now possible!
 
-Check the [demo](https://ravedoni.com/test/woditor/p2/) (under development) to get a better idea of the project.
+Check the [demo](https://michaelravedoni.github.io/woditor/) (under development) to get a better idea of the project.
 
 ## Features
 
